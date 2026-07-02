@@ -1,15 +1,16 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { useRef } from "react";
 import CountUp from "react-countup";
-import { staggerContainer, fadeInUp } from "@/lib/animations";
+import { staggerContainer, scaleIn } from "@/lib/animations";
 
 const STATS = [
-  { value: 50,  suffix: "K+", label: "lessons shared"    },
-  { value: 120, suffix: "+",  label: "contributors"       },
-  { value: 1,   suffix: "M+", label: "wisdom readers"     },
-  { value: 85,  suffix: "+",  label: "countries reached"  },
+  { value: 50,  suffix: "K+", label: "lessons shared"   },
+  { value: 120, suffix: "+",  label: "contributors"      },
+  { value: 1,   suffix: "M+", label: "wisdom readers"    },
+  { value: 85,  suffix: "+",  label: "countries reached" },
 ];
 
 const easeOutExpo = (t, b, c, d) =>
@@ -17,11 +18,15 @@ const easeOutExpo = (t, b, c, d) =>
 
 export default function StatsSection() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], [30, -30]);
 
   return (
-    <section className="relative py-12 w-full bg-[#0d0d0d] text-[#e8e4d9]">
+    <section ref={sectionRef} className="relative py-12 w-full bg-[#0d0d0d] text-[#e8e4d9] overflow-hidden">
       <motion.div
         ref={ref}
+        style={{ y }}
         variants={staggerContainer}
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
@@ -32,8 +37,9 @@ export default function StatsSection() {
             {STATS.map((stat) => (
               <motion.div
                 key={stat.label}
-                variants={fadeInUp}
-                className="text-center flex flex-col items-center"
+                variants={scaleIn}
+                whileHover={{ scale: 1.06 }}
+                className="text-center flex flex-col items-center cursor-default"
               >
                 <div className="text-4xl md:text-5xl font-black text-[#c8ff6b] tracking-tight uppercase mb-1">
                   {inView ? (
@@ -43,7 +49,12 @@ export default function StatsSection() {
                   )}
                 </div>
                 <p className="text-[#444] text-xs font-black uppercase tracking-wider">{stat.label}</p>
-                <div className="mt-4 w-3 h-3 bg-[#c8ff6b] rotate-45 border border-[#0d0d0d]" />
+                <motion.div
+                  initial={{ scale: 0, rotate: 0 }}
+                  animate={inView ? { scale: 1, rotate: 45 } : {}}
+                  transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
+                  className="mt-4 w-3 h-3 bg-[#c8ff6b] border border-[#0d0d0d]"
+                />
               </motion.div>
             ))}
           </div>

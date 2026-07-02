@@ -5,13 +5,13 @@ import Link from "next/link";
 import { Check, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { staggerContainer, fadeInUp } from "@/lib/animations";
+import { staggerContainerFast, slideInRight } from "@/lib/animations";
 
 const CONTRIBUTORS_DATA = [
-  { id: 1, name: "Elena Vance",  lessonsCount: 42, verified: true,  memberSince: "Jan 2022", avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=150&auto=format&fit=crop", profileHref: "/contributors/elena-vance",  accent: "#c8ff6b" },
-  { id: 2, name: "Marcus Thorne",lessonsCount: 38, verified: false, memberSince: "Mar 2022", avatarUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=150&auto=format&fit=crop", profileHref: "/contributors/marcus-thorne", accent: "#4dd0b1" },
-  { id: 3, name: "Sarah Chen",   lessonsCount: 31, verified: false, memberSince: "Jun 2022", avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop", profileHref: "/contributors/sarah-chen",   accent: "#ffd166" },
-  { id: 4, name: "Julian Aris",  lessonsCount: 27, verified: false, memberSince: "Sep 2022", avatarUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=150&auto=format&fit=crop", profileHref: "/contributors/julian-aris",  accent: "#ffb3a7" },
+  { id: 1, name: "Elena Vance",   lessonsCount: 42, verified: true,  memberSince: "Jan 2022", avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=150&auto=format&fit=crop", profileHref: "/contributors/elena-vance",   accent: "#c8ff6b" },
+  { id: 2, name: "Marcus Thorne", lessonsCount: 38, verified: false, memberSince: "Mar 2022", avatarUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=150&auto=format&fit=crop", profileHref: "/contributors/marcus-thorne", accent: "#4dd0b1" },
+  { id: 3, name: "Sarah Chen",    lessonsCount: 31, verified: false, memberSince: "Jun 2022", avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop", profileHref: "/contributors/sarah-chen",    accent: "#ffd166" },
+  { id: 4, name: "Julian Aris",   lessonsCount: 27, verified: false, memberSince: "Sep 2022", avatarUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=150&auto=format&fit=crop", profileHref: "/contributors/julian-aris",   accent: "#ffb3a7" },
 ];
 
 export default function TopContributors() {
@@ -31,17 +31,16 @@ export default function TopContributors() {
         </motion.div>
 
         <motion.div
-          variants={staggerContainer}
+          variants={staggerContainerFast}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
           className="flex gap-6 overflow-x-auto pb-8 scroll-hide -mx-6 sm:-mx-8 px-6 sm:px-8"
         >
           {CONTRIBUTORS_DATA.map((person) => (
-            <motion.div key={person.id} variants={fadeInUp} className="flex-shrink-0">
+            <motion.div key={person.id} variants={slideInRight} whileHover={{ y: -5 }} className="flex-shrink-0">
               <Link
                 href={person.profileHref}
-                className="flex-shrink-0 w-64 p-5 rounded-2xl flex flex-col gap-4 bg-[#111] border-[2.5px] border-[#2a2a2a] shadow-[4px_4px_0px_0px_#0a0a0a] hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-[2.5px_2.5px_0px_0px_#0a0a0a] transition-all duration-150 group"
-                style={{ '--accent': person.accent }}
+                className="flex-shrink-0 w-64 p-5 rounded-2xl flex flex-col gap-4 bg-[#111] border-[2.5px] border-[#2a2a2a] shadow-[4px_4px_0px_0px_#0a0a0a] transition-shadow duration-150 group"
               >
                 <div className="flex items-center gap-4">
                   <div className="relative">
@@ -49,9 +48,13 @@ export default function TopContributors() {
                       <Image src={person.avatarUrl} alt={person.name} fill sizes="48px" className="object-cover" loading="lazy" />
                     </div>
                     {person.verified && (
-                      <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-[1.5px] border-[#2a2a2a] flex items-center justify-center" style={{ background: person.accent }}>
+                      <motion.div
+                        whileHover={{ scale: 1.2 }}
+                        className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-[1.5px] border-[#2a2a2a] flex items-center justify-center"
+                        style={{ background: person.accent }}
+                      >
                         <Check className="w-2.5 h-2.5 stroke-[3]" style={{ color: "#1a2200" }} />
-                      </div>
+                      </motion.div>
                     )}
                   </div>
                   <div>

@@ -1,134 +1,132 @@
 /**
- * Reusable Framer Motion animation variants
- * Used across all premium-enhanced components
+ * Animation variants — spring-based, physical motion
+ * Built for the dark neo-brutalist theme
  */
 
-// Fade up animation for section entrances
+// Spring config presets
+export const springSnappy = { type: "spring", stiffness: 260, damping: 20, mass: 0.8 };
+export const springSoft = { type: "spring", stiffness: 120, damping: 18, mass: 1 };
+export const springBouncy = { type: "spring", stiffness: 320, damping: 14, mass: 0.6 };
+
+// Fade + rise with a touch of blur-to-focus (feels more premium than plain opacity/y)
 export const fadeInUp = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 32, filter: "blur(6px)" },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+    filter: "blur(0px)",
+    transition: { ...springSoft, duration: 0.6 },
   },
 };
 
-// Fade in with no vertical movement
 export const fadeIn = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { duration: 0.6, ease: "easeOut" },
-  },
+  visible: { opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
-// Slide in from left
 export const slideInLeft = {
-  hidden: { opacity: 0, x: -40 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
-  },
+  hidden: { opacity: 0, x: -48, filter: "blur(4px)" },
+  visible: { opacity: 1, x: 0, filter: "blur(0px)", transition: springSoft },
 };
 
-// Slide in from right
 export const slideInRight = {
-  hidden: { opacity: 0, x: 40 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
-  },
+  hidden: { opacity: 0, x: 48, filter: "blur(4px)" },
+  visible: { opacity: 1, x: 0, filter: "blur(0px)", transition: springSoft },
 };
 
-// Scale up animation
+// Pop-in scale — great for cards, badges, icons
 export const scaleIn = {
-  hidden: { opacity: 0, scale: 0.92 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
-  },
+  hidden: { opacity: 0, scale: 0.85 },
+  visible: { opacity: 1, scale: 1, transition: springSnappy },
 };
 
-// Stagger children container
+// Rotate-in — for playful mascot / icon elements
+export const rotateIn = {
+  hidden: { opacity: 0, scale: 0.8, rotate: -8 },
+  visible: { opacity: 1, scale: 1, rotate: 0, transition: springBouncy },
+};
+
+// Stagger containers
 export const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.1,
-    },
+    transition: { staggerChildren: 0.1, delayChildren: 0.08 },
   },
 };
 
-// Stagger children with slower delay
+export const staggerContainerFast = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05, delayChildren: 0.05 },
+  },
+};
+
 export const staggerContainerSlow = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.18,
-      delayChildren: 0.2,
-    },
+    transition: { staggerChildren: 0.16, delayChildren: 0.15 },
   },
 };
 
-// Card hover animation preset
+// Card hover — lift + subtle glow via box-shadow, no rotation drift
 export const cardHover = {
-  rest: {
-    y: 0,
-    scale: 1,
-    boxShadow: "0 0 0 0 rgba(195, 192, 255, 0)",
-  },
+  rest: { y: 0, scale: 1 },
   hover: {
-    y: -8,
-    scale: 1.02,
-    boxShadow: "0 20px 60px -10px rgba(195, 192, 255, 0.15)",
-    transition: { duration: 0.3, ease: "easeOut" },
+    y: -6,
+    scale: 1.015,
+    transition: { ...springSnappy, duration: 0.25 },
   },
 };
 
-// Counter number animation config
-export const counterConfig = {
-  duration: 2.5,
-  ease: [0.16, 1, 0.3, 1],
+// Magnetic button press feedback
+export const buttonTap = {
+  rest: { scale: 1 },
+  hover: { scale: 1.03, transition: springSnappy },
+  tap: { scale: 0.96, transition: { duration: 0.1 } },
 };
 
-// Floating animation for decorative elements
+// Text container for word-by-word reveal
+export const textContainer = {
+  hidden: { opacity: 1 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.045, delayChildren: 0.1 },
+  },
+};
+
+export const textWord = {
+  hidden: { opacity: 0, y: 18, filter: "blur(4px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+  },
+};
+
+// Marquee-style infinite float for decorative elements
 export const floatingAnimation = {
-  y: [0, -15, 0],
-  transition: {
-    duration: 6,
-    repeat: Infinity,
-    ease: "easeInOut",
-  },
+  y: [0, -14, 0],
+  transition: { duration: 5, repeat: Infinity, ease: "easeInOut" },
 };
 
 export const floatingAnimationSlow = {
   y: [0, -10, 0],
-  opacity: [0.3, 0.6, 0.3],
-  transition: {
-    duration: 8,
-    repeat: Infinity,
-    ease: "easeInOut",
-  },
+  opacity: [0.4, 0.7, 0.4],
+  transition: { duration: 7, repeat: Infinity, ease: "easeInOut" },
 };
 
-// Navbar scroll states
-export const navbarVariants = {
-  transparent: {
-    backgroundColor: "rgba(16, 20, 21, 0)",
-    backdropFilter: "blur(0px)",
-    boxShadow: "0 0 0 0 rgba(0,0,0,0)",
-    height: 72,
-  },
-  scrolled: {
-    backgroundColor: "rgba(16, 20, 21, 0.8)",
-    backdropFilter: "blur(24px)",
-    boxShadow: "0 4px 30px rgba(0,0,0,0.3)",
-    height: 64,
-  },
+// Underline draw-in (for nav links / headings)
+export const underlineDraw = {
+  hidden: { scaleX: 0 },
+  visible: { scaleX: 1, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
+};
+
+// Counter/number pop
+export const counterConfig = {
+  duration: 2.2,
+  ease: [0.16, 1, 0.3, 1],
 };

@@ -2,13 +2,13 @@
 
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { staggerContainer, fadeInUp } from "@/lib/animations";
+import { staggerContainer, fadeInUp, rotateIn } from "@/lib/animations";
 
 const FEATURES_DATA = [
-  { id: 1, emoji: "💡", title: "Active Reflection",    description: "Transform passing thoughts into structured insights through guided editorial prompts.", accent: "#c8ff6b" },
-  { id: 2, emoji: "📁", title: "Legacy Preservation",  description: "Securely store your life's most valuable lessons in a digital vault designed for longevity.", accent: "#4dd0b1" },
-  { id: 3, emoji: "📈", title: "Exponential Growth",   description: "Identify patterns in your decision-making and accelerate your personal evolution.", accent: "#ffd166" },
-  { id: 4, emoji: "👥", title: "Curation Community",   description: "Connect with a thoughtful, ambitious audience that values intellectual substance.", accent: "#ffb3a7" },
+  { id: 1, emoji: "💡", title: "Active Reflection",   description: "Transform passing thoughts into structured insights through guided editorial prompts.", accent: "#c8ff6b" },
+  { id: 2, emoji: "📁", title: "Legacy Preservation", description: "Securely store your life's most valuable lessons in a digital vault designed for longevity.", accent: "#4dd0b1" },
+  { id: 3, emoji: "📈", title: "Exponential Growth",  description: "Identify patterns in your decision-making and accelerate your personal evolution.", accent: "#ffd166" },
+  { id: 4, emoji: "👥", title: "Curation Community",  description: "Connect with a thoughtful, ambitious audience that values intellectual substance.", accent: "#ffb3a7" },
 ];
 
 export default function ReflectionFeatures() {
@@ -47,14 +47,18 @@ export default function ReflectionFeatures() {
             <motion.div
               key={item.id}
               variants={fadeInUp}
-              className="p-7 rounded-2xl bg-[#161616] border-[2px] border-[#2a2a2a] flex flex-col items-start shadow-[4px_4px_0px_0px_#0a0a0a] hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-[2.5px_2.5px_0px_0px_#0a0a0a] transition-all duration-150 group"
+              whileHover={{ y: -6 }}
+              className="p-7 rounded-2xl bg-[#161616] border-[2px] border-[#2a2a2a] flex flex-col items-start shadow-[4px_4px_0px_0px_#0a0a0a] transition-shadow duration-150 group"
             >
-              <div
-                className="w-12 h-12 border-[2px] border-[#2a2a2a] rounded-xl flex items-center justify-center mb-5 transition-all duration-150"
+              <motion.div
+                variants={rotateIn}
+                whileHover={{ rotate: 6, scale: 1.08 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="w-12 h-12 border-[2px] border-[#2a2a2a] rounded-xl flex items-center justify-center mb-5"
                 style={{ background: item.accent + "15" }}
               >
                 <span className="text-2xl select-none">{item.emoji}</span>
-              </div>
+              </motion.div>
               <h4 className="font-black text-[#e8e4d9] text-lg mb-3 uppercase tracking-tight group-hover:text-[#c8ff6b] transition-colors">
                 {item.title}
               </h4>
