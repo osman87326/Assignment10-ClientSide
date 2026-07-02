@@ -3,6 +3,18 @@
 import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
+// Simple custom tooltip for recharts
+function CustomTooltip({ active, payload, label }) {
+    if (!active || !payload || !payload.length) return null;
+    const data = payload[0];
+    return (
+        <div className="bg-white border border-[#1C1611] p-2 rounded text-xs font-bold text-[#1C1611]">
+            <div className="capitalize">{label}</div>
+            <div>{data.name}: {data.value}</div>
+        </div>
+    );
+}
+
 export default function PlatformHealthChart({ analytics = [] }) {
     const [activeTab, setActiveTab] = useState("users");
 
@@ -18,18 +30,6 @@ export default function PlatformHealthChart({ analytics = [] }) {
     ];
 
     const chartData = analytics && analytics.length > 0 ? analytics : defaultData;
-    
-    // Simple custom tooltip for recharts
-    function CustomTooltip({ active, payload, label }) {
-        if (!active || !payload || !payload.length) return null;
-        const data = payload[0];
-        return (
-            <div className="bg-white border border-[#1C1611] p-2 rounded text-xs font-bold text-[#1C1611]">
-                <div className="capitalize">{label}</div>
-                <div>{data.name}: {data.value}</div>
-            </div>
-        );
-    }
     
 
     return (
