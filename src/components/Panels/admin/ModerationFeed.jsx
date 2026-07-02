@@ -11,6 +11,16 @@ export default function ModerationFeed({ reports }) {
     const [selectedReport, setSelectedReport] = useState(null);
     const [confirmAction, setConfirmAction] = useState(null);
 
+    const formatReportDate = (timestamp) => {
+        if (!timestamp) return "Unknown Date";
+        return new Date(timestamp).toLocaleDateString();
+    };
+
+    const formatReportDateTime = (timestamp) => {
+        if (!timestamp) return "Unknown Date";
+        return new Date(timestamp).toLocaleString();
+    };
+
     const executeAction = async () => {
         if (!confirmAction) return;
         
@@ -93,7 +103,7 @@ export default function ModerationFeed({ reports }) {
                                 <tr key={row._id} className="group">
                                     <td className="py-4 pr-3 min-w-0">
                                         <h4 className="text-sm font-sans font-black text-[#1C1611] truncate group-hover:text-[#FF4A3A] transition-colors">{row.reason || "Flagged Lesson"}</h4>
-                                        <p className="text-[11px] font-sans font-bold text-[#1C1611]/60 mt-0.5 whitespace-nowrap uppercase">Reported Content • {new Date(row.timestamp || Date.now()).toLocaleDateString()}</p>
+                                        <p className="text-[11px] font-sans font-bold text-[#1C1611]/60 mt-0.5 whitespace-nowrap uppercase">Reported Content • {formatReportDate(row.timestamp)}</p>
                                     </td>
                                     <td className="py-4 text-xs font-sans font-bold text-[#1C1611]/70 whitespace-nowrap">{row.reporterId?.substring(0, 8) || "Anonymous"}</td>
                                     <td className="py-4 whitespace-nowrap">
@@ -135,7 +145,7 @@ export default function ModerationFeed({ reports }) {
                             </div>
                             <div>
                                 <span className="block text-[10px] text-[#1C1611]/60 font-black uppercase tracking-widest mb-1">Date</span>
-                              <p>{new Date(selectedReport.timestamp || Date.now()).toLocaleString()}</p>
+                              <p>{formatReportDateTime(selectedReport.timestamp)}</p>
                             </div>
                             
                             <div className="flex flex-col gap-3 mt-4 pt-4 border-t-[2.5px] border-[#1C1611]/10">

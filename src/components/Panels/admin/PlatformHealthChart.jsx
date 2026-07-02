@@ -19,20 +19,7 @@ export default function PlatformHealthChart({ analytics = [] }) {
 
     const chartData = analytics && analytics.length > 0 ? analytics : defaultData;
 
-    // Custom Tooltip for professional look
-    const CustomTooltip = ({ active, payload, label }) => {
-        if (active && payload && payload.length) {
-            return (
-                <div className="bg-white border-[2.5px] border-[#1C1611] px-4 py-2 rounded-xl shadow-[4px_4px_0px_0px_#1C1611]">
-                    <p className="text-[10px] font-black text-[#1C1611]/60 uppercase tracking-widest mb-1">{label}</p>
-                    <p className="text-sm font-black text-[#1C1611] uppercase tracking-tight">
-                        {payload[0].name}: <span className={activeTab === "users" ? "text-[#4DD0B1]" : "text-[#FCD34D]"}>{payload[0].value}</span>
-                    </p>
-                </div>
-            );
-        }
-        return null;
-    };
+    
 
     return (
         <div className="w-full bg-white border-[3.5px] border-[#1C1611] rounded-3xl p-6 sm:p-8 shadow-[8px_8px_0px_0px_#1C1611]">
