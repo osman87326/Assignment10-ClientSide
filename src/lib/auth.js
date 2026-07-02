@@ -25,6 +25,14 @@ const getBetterAuthURL = () => {
 export const auth = betterAuth({
     database: mongodbAdapter(db, { client }),
     baseURL: getBetterAuthURL(),
+    trustedOrigins: [
+        "https://assignment10-client-side.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:5000"
+    ],
+    advanced: {
+        disableOriginCheck: true
+    },
     user: {
         additionalFields: {
             role: {
