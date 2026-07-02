@@ -1,104 +1,61 @@
 import Link from "next/link";
 import { Home, LayoutDashboard, ShieldAlert, BookOpen, Sparkles, Compass } from "lucide-react";
-import PenMascot from "@/components/PenMascot";
-
-export const metadata = {
-  title: "Unauthorized – Digital Life Lessons",
-  description: "You don't have permission to access this page. Please sign in or contact support.",
-};
 
 export default function UnauthorizedPage() {
   return (
-    <div className="w-full h-dvh bg-[#F6F0DD] text-[#1C1611] px-3 sm:px-4 py-4 sm:py-6 flex flex-col justify-between items-center select-none overflow-hidden relative">
-      
-      {/* Blueprint Dot Matrix texture */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.04]"
-        style={{
-          backgroundImage: "radial-gradient(#1C1611 1.5px, transparent 1.5px)",
-          backgroundSize: "20px 20px"
-        }}
+    <div className="w-full h-dvh bg-[#0d0d0d] text-[#e8e4d9] px-4 py-6 flex flex-col justify-between items-center select-none overflow-hidden relative">
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{ backgroundImage: "radial-gradient(#c8ff6b 1.5px, transparent 1.5px)", backgroundSize: "20px 20px" }}
         aria-hidden="true"
       />
 
-      {/* Top Brand Token Header */}
-      <header className="z-10 relative shrink-0">
-        <h2 className="text-base sm:text-lg md:text-xl font-black uppercase tracking-wider text-[#1C1611]">
-          Digital Life Lessons
-        </h2>
+      <header className="z-10 relative">
+        <h2 className="text-base sm:text-lg font-black uppercase tracking-wider text-[#e8e4d9]">Digital Life Lessons</h2>
       </header>
 
-      {/* Primary Error Context Card */}
-      <main className="w-full max-w-md sm:max-w-xl bg-[#FF4A3A] border-[3px] sm:border-[3.5px] border-[#1C1611] rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-10 mx-auto text-center relative shadow-[4px_4px_0px_0px_#1C1611] sm:shadow-[6px_6px_0px_0px_#1C1611] flex flex-col items-center z-10 transition-all duration-100">
-        
-        {/* Ambient watermark icon behind the error number */}
-        <div className="absolute top-4 sm:top-6 text-[#1C1611]/5 pointer-events-none select-none">
-          <ShieldAlert className="w-20 sm:w-28 h-20 sm:h-28 stroke-[0.5]" />
+      <main className="w-full max-w-md sm:max-w-xl bg-[#161616] border-[2.5px] border-[#ff5c4733] rounded-2xl sm:rounded-3xl p-6 sm:p-10 mx-auto text-center relative shadow-[6px_6px_0px_0px_#0a0a0a] flex flex-col items-center z-10">
+        <div className="absolute top-4 text-[#ff5c47]/5 pointer-events-none">
+          <ShieldAlert className="w-24 h-24 stroke-[0.5]" />
         </div>
 
-        {/* Crying Pen Mascot */}
-        <div className="mb-0 sm:mb-1 z-10 relative">
-          <PenMascot variant="crying" color="yellow" className="w-10 h-20 sm:w-14 sm:h-28" />
-        </div>
-
-        {/* Luxury Editorial Error Number */}
-        <h1 className="text-[48px] sm:text-[80px] md:text-[96px] font-black leading-none tracking-tighter text-white italic select-none drop-shadow-[3px_3px_0px_#1C1611]">
+        <h1 className="text-[72px] sm:text-[96px] font-black leading-none tracking-tighter text-[#ff5c47] italic select-none">
           403
         </h1>
 
-        {/* Heading */}
-        <h3 className="text-base sm:text-xl md:text-2xl font-black text-white tracking-tight mt-1 sm:mt-2 mb-1 sm:mb-2 uppercase drop-shadow-[1px_1px_0px_#1C1611]">
+        <h3 className="text-lg sm:text-2xl font-black text-[#e8e4d9] tracking-tight mt-2 mb-2 uppercase">
           Beyond your clearance.
         </h3>
 
-        {/* Informative message */}
-        <p className="text-[10px] sm:text-[11px] md:text-xs text-white/90 font-bold leading-relaxed max-w-xs sm:max-w-sm mx-auto mb-4 sm:mb-6 uppercase">
-          Some doors remain sealed even to those who walk the halls. This territory is reserved for a role you have yet to carry.
+        <p className="text-[10px] sm:text-xs text-[#555] font-bold leading-relaxed max-w-sm mx-auto mb-6 uppercase">
+          This territory is reserved for a role you have yet to carry. Contact an admin if you believe this is an error.
         </p>
 
-        {/* Fluid Button Array Configuration */}
-        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 w-full justify-center">
-          <Link
-            href="/my-lessons"
-            id="unauthorized-dashboard-btn"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#FCD34D] text-[#1C1611] font-black uppercase text-xs sm:text-sm h-10 sm:h-11 px-5 sm:px-6 rounded-xl border-[2.5px] border-[#1C1611] shadow-[2.5px_2.5px_0px_0px_#1C1611] hover:translate-x-[0.5px] hover:translate-y-[0.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[1.5px] active:translate-y-[1.5px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all cursor-pointer"
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
+          <Link href="/my-lessons"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#c8ff6b] text-[#1a2200] font-black uppercase text-xs sm:text-sm h-11 px-6 rounded-xl border-[2px] border-[#2a2a2a] shadow-[2.5px_2.5px_0px_0px_#0a0a0a] hover:translate-x-[0.5px] hover:translate-y-[0.5px] hover:shadow-[2px_2px_0px_0px_#0a0a0a] active:shadow-none transition-all cursor-pointer"
           >
-            <LayoutDashboard className="w-4 h-4 stroke-[3px]" />
-            Dashboard
+            <LayoutDashboard className="w-4 h-4 stroke-[3px]" /> Dashboard
           </Link>
-
-          <Link
-            href="/"
-            id="unauthorized-home-btn"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white text-[#1C1611] font-black uppercase text-xs sm:text-sm h-10 sm:h-11 px-5 sm:px-6 rounded-xl border-[2.5px] border-[#1C1611] shadow-[2.5px_2.5px_0px_0px_#1C1611] hover:translate-x-[0.5px] hover:translate-y-[0.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[1.5px] active:translate-y-[1.5px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all cursor-pointer"
+          <Link href="/"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#1e1e1e] text-[#e8e4d9] font-black uppercase text-xs sm:text-sm h-11 px-6 rounded-xl border-[2px] border-[#2a2a2a] shadow-[2.5px_2.5px_0px_0px_#0a0a0a] hover:translate-x-[0.5px] hover:translate-y-[0.5px] hover:shadow-[2px_2px_0px_0px_#0a0a0a] active:shadow-none transition-all cursor-pointer"
           >
-            <Home className="w-4 h-4 stroke-[3px]" />
-            Return Home
+            <Home className="w-4 h-4 stroke-[3px]" /> Return Home
           </Link>
         </div>
 
-        {/* Bottom Technical System Stamp Reference */}
-        <span className="text-[9px] sm:text-[10px] font-mono tracking-widest text-white/60 font-black uppercase mt-4 sm:mt-6 block select-none">
+        <span className="text-[9px] font-mono tracking-widest text-[#333] font-black uppercase mt-6 block select-none">
           Error Ref: #ACCESS_DENIED_0x403
         </span>
       </main>
 
-      {/* Page Base Architectural Philosophy Links */}
-      <footer className="w-full max-w-md flex justify-center items-center gap-6 sm:gap-8 md:gap-12 z-10 pt-3 sm:pt-4 border-t-2 border-[#1C1611] shrink-0">
-        <div className="flex flex-col items-center gap-1 opacity-60 hover:opacity-100 transition-opacity text-[#1C1611]">
-          <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5px]" />
-          <span className="text-[8px] sm:text-[9px] font-black tracking-widest uppercase">Philosophy</span>
-        </div>
-        <div className="flex flex-col items-center gap-1 opacity-60 hover:opacity-100 transition-opacity text-[#1C1611]">
-          <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5px]" />
-          <span className="text-[8px] sm:text-[9px] font-black tracking-widest uppercase">Focus</span>
-        </div>
-        <div className="flex flex-col items-center gap-1 opacity-60 hover:opacity-100 transition-opacity text-[#1C1611]">
-          <Compass className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5px]" />
-          <span className="text-[8px] sm:text-[9px] font-black tracking-widest uppercase">Structure</span>
-        </div>
+      <footer className="w-full max-w-md flex justify-center items-center gap-8 z-10 pt-4 border-t border-[#1e1e1e]">
+        {[BookOpen, Sparkles, Compass].map((Icon, i) => (
+          <div key={i} className="flex flex-col items-center gap-1 opacity-30 hover:opacity-80 transition-opacity text-[#c8ff6b]">
+            <Icon className="w-3.5 h-3.5 stroke-[2.5px]" />
+          </div>
+        ))}
       </footer>
-
     </div>
   );
 }
