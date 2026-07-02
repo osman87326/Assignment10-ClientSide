@@ -6,9 +6,25 @@ import { jwt } from "better-auth/plugins";
 import { stripe } from "@better-auth/stripe";
 
 const db = client.db("life-lessons");
+
+const getBetterAuthURL = () => {
+    if (process.env.VERCEL) {
+        if (process.env.BETTER_AUTH_URL && !process.env.BETTER_AUTH_URL.includes("localhost")) {
+            return process.env.BETTER_AUTH_URL;
+        }
+        if (process.env.NEXT_PUBLIC_BASE_URL && !process.env.NEXT_PUBLIC_BASE_URL.includes("localhost")) {
+            return process.env.NEXT_PUBLIC_BASE_URL;
+        }
+        if (process.env.VERCEL_URL) {
+            return `https://${process.env.VERCEL_URL}`;
+        }
+    }
+    return process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+};
+
 export const auth = betterAuth({
     database: mongodbAdapter(db, { client }),
-    baseURL: process.env.BETTER_AUTH_URL,
+    baseURL: getBetterAuthURL(),
     user: {
         additionalFields: {
             role: {

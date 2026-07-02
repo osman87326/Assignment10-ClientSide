@@ -5,6 +5,14 @@ const getBaseURL = () => {
   if (typeof window !== "undefined") {
     return window.location.origin;
   }
+  if (process.env.VERCEL) {
+    if (process.env.NEXT_PUBLIC_BASE_URL && !process.env.NEXT_PUBLIC_BASE_URL.includes("localhost")) {
+      return process.env.NEXT_PUBLIC_BASE_URL;
+    }
+    if (process.env.VERCEL_URL) {
+      return `https://${process.env.VERCEL_URL}`;
+    }
+  }
   return process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 };
 
