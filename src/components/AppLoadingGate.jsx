@@ -9,11 +9,18 @@ import LoadingScreen from "@/components/LoadingScreen";
  * once the page has fully loaded (window.onload) and minimum duration is met.
  */
 export default function AppLoadingGate({ children }) {
-  const [isLoading, setIsLoading] = useState(() => document.readyState !== "complete");
+  // Initialize as `true` (safe for SSR — no `document` access at module level).
+  // The useEffect below immediately resolves it on the client if already loaded.
+  const [isLoading, setIsLoading] = useState(true);
   const [showOverlay, setShowOverlay] = useState(true);
 
   useEffect(() => {
-    if (document.readyState === "complete") return;
+    // If the page already finished loading by the time this component mounted,
+    // resolve immediately; otherwise wait for the load event.
+    if (document.readyState === "complete") {
+      setIsLoading(false);
+      return;
+    }
 
     const handleLoad = () => setIsLoading(false);
     window.addEventListener("load", handleLoad);
