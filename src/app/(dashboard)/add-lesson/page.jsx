@@ -16,7 +16,7 @@ function AddLessonContent() {
       {/* Page Header with back navigation */}
       <header className="flex items-center gap-4 border-b-[3.5px] border-[#1C1611] pb-6">
         <Link
-          href="/dashboard/my-lessons"
+          href="/my-lessons"
           className="w-10 h-10 rounded-xl bg-white border-2 border-[#1C1611] flex items-center justify-center text-[#1C1611] shadow-[2px_2px_0px_0px_#1C1611] hover:translate-x-[0.5px] hover:translate-y-[0.5px] hover:shadow-[1.5px_1.5px_0px_0px_#1C1611] active:translate-x-[1.5px] active:translate-y-[1.5px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 shrink-0 cursor-pointer"
           aria-label="Back to My Lessons"
         >

@@ -9,13 +9,11 @@ import LoadingScreen from "@/components/LoadingScreen";
  * once the page has fully loaded (window.onload) and minimum duration is met.
  */
 export default function AppLoadingGate({ children }) {
-  const [isLoading, setIsLoading] = useState(() => typeof document === "undefined" ? true : document.readyState !== "complete");
+  const [isLoading, setIsLoading] = useState(() => document.readyState !== "complete");
   const [showOverlay, setShowOverlay] = useState(true);
 
   useEffect(() => {
-    if (document.readyState === "complete") {
-      return;
-    }
+    if (document.readyState === "complete") return;
 
     const handleLoad = () => setIsLoading(false);
     window.addEventListener("load", handleLoad);

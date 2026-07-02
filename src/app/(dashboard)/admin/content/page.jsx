@@ -20,8 +20,7 @@ export default function SystemContentPage() {
                 setToken(jwt);
 
                 if (jwt) {
-                    const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3100';
-                    const res = await fetch(`${serverUrl}/api/admin/lessons`, {
+                                        const res = await fetch(`/api/backend/admin/lessons`, {
                         headers: { "Authorization": `Bearer ${jwt}` }
                     });
                     if (res.ok) {
@@ -40,8 +39,7 @@ export default function SystemContentPage() {
 
     const handleFeatureToggle = async (lessonId, currentStatus) => {
         try {
-            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3100';
-            const res = await fetch(`${serverUrl}/api/admin/lessons/${lessonId}/feature`, {
+                        const res = await fetch(`/api/backend/admin/lessons/${lessonId}/feature`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -71,8 +69,7 @@ export default function SystemContentPage() {
         const lessonId = confirmDelete;
 
         try {
-            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3100';
-            const res = await fetch(`${serverUrl}/api/admin/lessons/${lessonId}`, {
+                        const res = await fetch(`/api/backend/admin/lessons/${lessonId}`, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${token}`

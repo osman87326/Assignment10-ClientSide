@@ -8,19 +8,19 @@ export default function LessonsSearchFilters({
   variant = "dashboard",
   placeholder = "Search your notebook...",
   availableCategories = [],
-  availableTones = [],
+  availableTones = []
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
-  const [category, setCategory] = useState(
-    searchParams.get("category") || "All Categories",
-  );
+  const [category, setCategory] = useState(searchParams.get("category") || "All Categories");
   const [tone, setTone] = useState(searchParams.get("emotionalTone") || "Any Tone");
-  const [activeFilter, setActiveFilter] = useState("All Lessons");
-  const [activeSort, setActiveSort] = useState("Newest First");
+  const [activeFilter, setActiveFilter] = useState(searchParams.get("filter") || "All Lessons");
+  const [activeSort, setActiveSort] = useState(searchParams.get("sort") || "Newest First");
+
+
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
@@ -34,16 +34,24 @@ export default function LessonsSearchFilters({
     if (tone && tone !== "Any Tone") params.set("emotionalTone", tone);
     else params.delete("emotionalTone");
 
+    if (activeFilter && activeFilter !== "All Lessons") params.set("filter", activeFilter);
+    else params.delete("filter");
+
+    if (activeSort && activeSort !== "Newest First") params.set("sort", activeSort);
+    else params.delete("sort");
+
+    // Default to page 1 on filter change
     params.set("page", "1");
 
     const timer = setTimeout(() => {
+      // Avoid pushing if parameters haven't effectively changed
       if (params.toString() !== searchParams.toString()) {
         router.push(`${pathname}?${params.toString()}`, { scroll: false });
       }
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [searchQuery, category, tone, pathname, router, searchParams]);
+  }, [searchQuery, category, tone, activeFilter, activeSort, pathname, router]);
 
   const handleClearFilters = () => {
     setSearchQuery("");
@@ -52,6 +60,7 @@ export default function LessonsSearchFilters({
     router.push(pathname, { scroll: false });
   };
 
+  // ── Dashboard variant: compact search + pill buttons ──
   if (variant === "dashboard") {
     return (
       <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -64,33 +73,43 @@ export default function LessonsSearchFilters({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={placeholder}
-            className="w-full h-10 pl-10 pr-4 bg-[#F6F0DD] border-[2.5px] border-[#1C1611] text-[#1C1611] text-xs font-black uppercase rounded-xl focus:outline-none placeholder:text-[#1C1611]/50 shadow-[2px_2px_0px_0px_#1C1611] transition-all"
+            className="w-full h-10 pl-11 pr-4 bg-[#F6F0DD] border-[2.5px] border-[#1C1611] text-[#1C1611] text-xs font-black uppercase rounded-xl focus:outline-none placeholder:text-[#1C1611]/50 shadow-[2px_2px_0px_0px_#1C1611] transition-all"
           />
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-          <button
-            onClick={() => setActiveFilter("All Lessons")}
-            className="h-10 px-4 bg-[#FCD34D] border-[2.5px] border-[#1C1611] rounded-xl text-[#1C1611] font-black uppercase text-xs hover:bg-[#FF4A3A] transition-colors flex items-center gap-1.5 cursor-pointer shadow-[2px_2px_0px_0px_#1C1611]"
+        <div className="flex items-center gap-4 w-full sm:w-auto justify-end">
+          <select
+            value={activeFilter}
+            onChange={(e) => setActiveFilter(e.target.value)}
+            className="h-10 px-4 bg-[#FCD34D] border-[2.5px] border-[#1C1611] rounded-xl text-[#1C1611] font-black uppercase text-xs cursor-pointer shadow-[2px_2px_0px_0px_#1C1611] hover:bg-[#FF4A3A] transition-colors"
           >
-            <span>{activeFilter}</span>
-            <ChevronDown className="w-3.5 h-3.5 stroke-[2.5px]" />
-          </button>
-          <button
-            onClick={() => setActiveSort("Newest First")}
-            className="h-10 px-4 bg-[#FFB3A7] border-[2.5px] border-[#1C1611] rounded-xl text-[#1C1611] font-black uppercase text-xs hover:bg-[#FF4A3A] transition-colors flex items-center gap-1.5 cursor-pointer shadow-[2px_2px_0px_0px_#1C1611]"
+            <option value="All Lessons">All Lessons</option>
+            <option value="Public Only">Public Only</option>
+            <option value="Private Only">Private Only</option>
+          </select>
+
+          <select
+            value={activeSort}
+            onChange={(e) => setActiveSort(e.target.value)}
+            className="h-10 px-4 bg-[#FFB3A7] border-[2.5px] border-[#1C1611] rounded-xl text-[#1C1611] font-black uppercase text-xs cursor-pointer shadow-[2px_2px_0px_0px_#1C1611] hover:bg-[#FF4A3A] transition-colors"
           >
-            <span>{activeSort}</span>
-            <SlidersHorizontal className="w-3.5 h-3.5 stroke-[2.5px]" />
-          </button>
+            <option value="Newest First">Newest First</option>
+            <option value="Oldest First">Oldest First</option>
+            <option value="Most Liked">Most Liked</option>
+            <option value="Most Saved">Most Saved</option>
+          </select>
         </div>
       </div>
     );
   }
 
+  // ── Public variant: full filter bar with dropdowns ──
   return (
-    <div className="w-full rounded-2xl p-4 border-[3px] border-[#1C1611] bg-[#4DD0B1] flex flex-col md:flex-row md:items-center justify-between gap-4 mx-auto max-w-7xl shadow-[4px_4px_0px_0px_#1C1611]">
+    <div
+      className="w-full rounded-2xl p-4 border-[3px] border-[#1C1611] bg-[#4DD0B1] flex flex-col md:flex-row md:items-center justify-between gap-4 mx-auto max-w-7xl shadow-[4px_4px_0px_0px_#1C1611]"
+    >
       <div className="flex flex-wrap items-center gap-3 flex-grow max-w-4xl">
+        {/* Search */}
         <div className="relative w-full sm:w-72">
           <span className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-[#1C1611]">
             <Search className="w-4 h-4 stroke-[2.5px]" />
@@ -105,45 +124,42 @@ export default function LessonsSearchFilters({
           />
         </div>
 
-        <div className="relative w-full sm:w-auto">
+        {/* Category */}
+        <div className="w-full sm:w-auto">
           <select
             id="lessons-category-filter"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="h-11 bg-[#F6F0DD] border-[2.5px] border-[#1C1611] text-[#1C1611] font-black uppercase text-xs rounded-xl focus:outline-none pr-10 pl-4 w-full sm:w-48 appearance-none cursor-pointer shadow-[2px_2px_0px_0px_#1C1611] transition-all"
+            className="h-11 bg-[#F6F0DD] border-[2.5px] border-[#1C1611] text-[#1C1611] font-black uppercase text-xs rounded-xl focus:outline-none px-4 w-full sm:w-48 cursor-pointer shadow-[2px_2px_0px_0px_#1C1611] transition-all"
           >
-            <option value="All Categories">All Categories</option>
+            <option value="All Categories" className="bg-[#F6F0DD] text-[#1C1611] font-black uppercase">All Categories</option>
             {availableCategories.map((cat) => (
-              <option key={cat} value={cat}>
+              <option key={cat} value={cat} className="bg-[#F6F0DD] text-[#1C1611] font-black uppercase">
                 {cat}
               </option>
             ))}
           </select>
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#1C1611]">
-            <ChevronDown className="w-4 h-4 stroke-[2.5px]" />
-          </span>
         </div>
 
-        <div className="relative w-full sm:w-auto">
+        {/* Tone */}
+        <div className="w-full sm:w-auto">
           <select
             id="lessons-tone-filter"
             value={tone}
             onChange={(e) => setTone(e.target.value)}
-            className="h-11 bg-[#F6F0DD] border-[2.5px] border-[#1C1611] text-[#1C1611] font-black uppercase text-xs rounded-xl focus:outline-none pr-10 pl-4 w-full sm:w-44 appearance-none cursor-pointer shadow-[2px_2px_0px_0px_#1C1611] transition-all"
+            className="h-11 bg-[#F6F0DD] border-[2.5px] border-[#1C1611] text-[#1C1611] font-black uppercase text-xs rounded-xl focus:outline-none px-4 w-full sm:w-44 cursor-pointer shadow-[2px_2px_0px_0px_#1C1611] transition-all"
           >
-            <option value="Any Tone">Any Tone</option>
+            <option value="Any Tone" className="bg-[#F6F0DD] text-[#1C1611] font-black uppercase">Any Tone</option>
             {availableTones.map((t) => (
-              <option key={t} value={t}>
+              <option key={t} value={t} className="bg-[#F6F0DD] text-[#1C1611] font-black uppercase">
                 {t}
               </option>
             ))}
           </select>
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#1C1611]">
-            <SlidersHorizontal className="w-3.5 h-3.5 stroke-[2.5px]" />
-          </span>
         </div>
       </div>
 
+      {/* Reset */}
       <button
         id="lessons-clear-filters"
         onClick={handleClearFilters}

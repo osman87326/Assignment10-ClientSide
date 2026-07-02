@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { ArrowLeft, Bookmark, Heart, MessageSquare, Send, ShieldAlert, Sparkles, Trash2, Flag } from "lucide-react";
+import { ArrowLeft, Bookmark, Heart, MessageSquare, Send, ShieldAlert, Sparkles, Trash2, Flag, Lock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { toast } from "react-toastify";
@@ -26,6 +26,7 @@ export default function LessonDetailPage() {
   const [submittingComment, setSubmittingComment] = useState(false);
   const [error, setError] = useState("");
   const [isLocked, setIsLocked] = useState(false);
+  const [authorProfile, setAuthorProfile] = useState(null);
 
   // Report Modal State
   const [showReportModal, setShowReportModal] = useState(false);
@@ -59,6 +60,19 @@ export default function LessonDetailPage() {
           
           if (session?.user) {
             setIsLiked(fetchedLesson.likes?.includes(session.user.id));
+          }
+          
+          // Fetch Author Profile for the new Author section
+          if (fetchedLesson.creatorId) {
+            try {
+              const authorRes = await fetch(`/api/backend/users/${fetchedLesson.creatorId}/public-profile`);
+              const authorData = await authorRes.json();
+              if (authorData.success) {
+                setAuthorProfile(authorData.data);
+              }
+            } catch (err) {
+              console.error("Error fetching author profile:", err);
+            }
           }
           
           // 3. Fetch Comments
@@ -498,8 +512,49 @@ export default function LessonDetailPage() {
           </div>
         </article>
 
+        {/* Author / Creator Section */}
+        {authorProfile && (
+          <section className="w-full bg-white border-[3.5px] border-[#1C1611] rounded-3xl shadow-[6px_6px_0px_0px_#1C1611] overflow-hidden p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6 relative">
+            <div className="absolute top-0 right-0 bg-[#FCD34D] text-[#1C1611] font-black uppercase text-[10px] tracking-widest px-4 py-1.5 border-b-[3.5px] border-l-[3.5px] border-[#1C1611] rounded-bl-xl shadow-[-2px_2px_0px_0px_#1C1611]">
+              Author
+            </div>
+            
+            <div className="relative w-24 h-24 rounded-full border-[3.5px] border-[#1C1611] shrink-0 bg-[#FFB3A7] overflow-hidden shadow-[3px_3px_0px_0px_#1C1611]">
+              {authorProfile.image || authorProfile.photoURL ? (
+                <Image 
+                  src={authorProfile.image || authorProfile.photoURL} 
+                  alt={authorProfile.name || "Author"} 
+                  fill 
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-3xl font-black text-[#1C1611]">
+                  {authorProfile.name ? authorProfile.name.charAt(0).toUpperCase() : "?"}
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col items-center sm:items-start flex-grow text-center sm:text-left">
+              <h3 className="text-2xl font-black uppercase tracking-tight text-[#1C1611]">
+                {authorProfile.name || "Anonymous Author"}
+              </h3>
+              <p className="text-sm font-bold text-[#1C1611]/70 mt-1">
+                {authorProfile.totalPublicLessons || 0} {(authorProfile.totalPublicLessons === 1) ? 'Lesson' : 'Lessons'} Published
+              </p>
+              
+              <Link
+                href={`/author/${authorProfile.id}`}
+                className="mt-4 bg-[#1C1611] text-white font-black uppercase text-xs px-6 py-2.5 rounded-xl border-2 border-[#1C1611] shadow-[2.5px_2.5px_0px_0px_#FF4A3A] hover:translate-x-[0.5px] hover:translate-y-[0.5px] hover:shadow-[1.5px_1.5px_0px_0px_#FF4A3A] active:translate-x-[1.5px] active:translate-y-[1.5px] active:shadow-none transition-all cursor-pointer inline-flex items-center gap-2"
+              >
+                View all lessons
+                <ArrowLeft className="w-3.5 h-3.5 stroke-[2.5px] rotate-180" />
+              </Link>
+            </div>
+          </section>
+        )}
+
         {/* Comments Section */}
-        <section className="w-full flex flex-col gap-6 mt-4">
+        <section className="w-full flex flex-col gap-6 mt-2">
           <h3 className="text-xl font-black uppercase tracking-tight text-[#1C1611] flex items-center gap-2">
             <MessageSquare className="w-5 h-5 stroke-[2.5px]" />
             Discussions ({comments.length})
@@ -599,7 +654,7 @@ export default function LessonDetailPage() {
             
             <form onSubmit={handleReportSubmit} className="p-6 flex flex-col gap-5">
               <p className="text-sm font-bold text-[#1C1611]/80">
-                Help us understand what's wrong with this lesson. Your report will be reviewed by our moderation team.
+                Help us understand what is wrong with this lesson. Your report will be reviewed by our moderation team.
               </p>
               
               <div className="flex flex-col gap-2">

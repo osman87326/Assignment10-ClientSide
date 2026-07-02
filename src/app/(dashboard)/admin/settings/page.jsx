@@ -1,68 +1,136 @@
-import { Save, RefreshCw, Server, ShieldCheck, Database } from "lucide-react";
+import { RefreshCw, Server, ShieldCheck, Database, Globe, Users, FileText } from "lucide-react";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function SystemSettingsPage() {
+export const metadata = {
+  title: "System Settings",
+};
+
+async function getPlatformStats(headersList) {
+    try {
+        const cookie = headersList.get('cookie') || '';
+        const tokenRes = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/token`, { headers: cookie ? { cookie } : {}, cache: 'no-store' });
+        const token = tokenRes.ok ? (await tokenRes.json())?.token : "";
+        if (!token) return null;
+
+        const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
+        const res = await fetch(`${serverUrl}/api/admin/stats`, {
+            headers: { "Authorization": `Bearer ${token}` },
+            cache: 'no-store'
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.success ? data.stats : null;
+    } catch (err) {
+        console.error("Error fetching platform stats:", err);
+        return null;
+    }
+}
+
+export default async function SystemSettingsPage() {
+    const headersList = await headers();
+    const session = await auth.api.getSession({ headers: headersList });
+
+    if (!session || session.user.role !== 'admin') {
+        redirect("/home");
+    }
+
+    const stats = await getPlatformStats(headersList);
+
     return (
-        <div className="w-full min-h-screen bg-[#0a0a0a] text-[#e0e3e5] p-4 sm:p-6 md:p-10 select-none">
+        <div className="w-full min-h-screen bg-[#F6F0DD] text-[#1C1611] p-4 sm:p-6 md:p-10 select-none">
             <div className="max-w-4xl mx-auto w-full flex flex-col gap-8">
 
                 {/* Header Block */}
-                <header className="border-b border-white/5 pb-6">
-                    <span className="text-[10px] font-sans font-bold tracking-widest text-[#c7c4d8]/30 uppercase block mb-1">
+                <header className="border-b-[3.5px] border-[#1C1611] pb-6">
+                    <span className="text-[10px] font-black tracking-widest text-[#1C1611]/70 uppercase block mb-1">
                         Configuration Matrix
                     </span>
-                    <h1 className="text-3xl font-serif font-bold text-white tracking-tight">
+                    <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-[#1C1611] mb-1.5 flex items-center gap-3">
                         System Settings
                     </h1>
-                    <p className="text-xs text-[#c7c4d8]/40 font-sans font-light mt-1.5">
-                        Adjust network-wide parameters, switch security parameters, clear caches, and toggle public verification systems.
+                    <p className="text-xs sm:text-sm text-[#1C1611]/80 font-bold uppercase">
+                        Platform overview and system configuration.
                     </p>
                 </header>
 
-                {/* Configuration Sections Stacks */}
-                <div className="flex flex-col gap-6 w-full font-sans text-xs">
+                {/* Configuration Sections */}
+                <div className="flex flex-col gap-8 w-full">
 
-                    {/* Box 1: Platform Core Flags */}
-                    <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 flex flex-col gap-5">
-                        <h3 className="text-sm font-serif font-bold text-white flex items-center gap-2 tracking-tight">
-                            <Server className="w-4 h-4 text-[#c3c0ff]" /> Global Core Variables
+                    {/* Platform Overview */}
+                    <div className="bg-white border-[3px] border-[#1C1611] shadow-[4px_4px_0px_0px_#1C1611] rounded-2xl p-6 flex flex-col gap-6">
+                        <h3 className="text-lg font-black uppercase text-[#1C1611] flex items-center gap-2">
+                            <Server className="w-5 h-5 stroke-[2.5px]" /> Platform Overview
                         </h3>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {[
+                                { label: "Total Users", value: stats?.totalUsers ?? '—', icon: Users, color: "text-[#1C1611]", bg: "bg-[#4DD0B1]" },
+                                { label: "Public Lessons", value: stats?.totalPublicLessons ?? '—', icon: Globe, color: "text-[#1C1611]", bg: "bg-[#FFD338]" },
+                                { label: "Private Drafts", value: stats?.totalDrafts ?? '—', icon: FileText, color: "text-[#1C1611]", bg: "bg-[#FFB3A7]" },
+                                { label: "Pending Reports", value: stats?.pendingReports ?? '—', icon: ShieldCheck, color: "text-white", bg: "bg-[#FF4A3A]" },
+                            ].map((item) => (
+                                <div key={item.label} className={`${item.bg} border-[3px] border-[#1C1611] rounded-xl p-4 flex flex-col gap-2 shadow-[2px_2px_0px_0px_#1C1611]`}>
+                                    <item.icon className={`w-5 h-5 stroke-[2.5px] ${item.color}`} />
+                                    <span className={`text-2xl font-black ${item.color}`}>{item.value}</span>
+                                    <span className={`text-[10px] font-black ${item.color} uppercase tracking-widest`}>{item.label}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Environment Info */}
+                    <div className="bg-white border-[3px] border-[#1C1611] shadow-[4px_4px_0px_0px_#1C1611] rounded-2xl p-6 flex flex-col gap-6">
+                        <h3 className="text-lg font-black uppercase text-[#1C1611] flex items-center gap-2">
+                            <Database className="w-5 h-5 stroke-[2.5px]" /> Environment
+                        </h3>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="flex flex-col gap-2">
-                                <label className="text-[10px] font-bold tracking-wider text-[#c7c4d8]/40 uppercase">Platform Environment Mode</label>
-                                <input type="text" readOnly value="Production / Stable" className="h-10 bg-white/[0.02] border border-white/5 rounded-xl px-4 text-[#c7c4d8]/60 cursor-not-allowed outline-none" />
+                                <label className="text-[10px] font-black uppercase tracking-widest text-[#1C1611]/70">Platform Environment</label>
+                                <div className="h-12 bg-[#F6F0DD] border-[3px] border-[#1C1611] rounded-xl px-4 flex items-center text-[#1C1611] font-black text-sm shadow-[2px_2px_0px_0px_#1C1611]">
+                                    Production / Stable
+                                </div>
                             </div>
                             <div className="flex flex-col gap-2">
-                                <label className="text-[10px] font-bold tracking-wider text-[#c7c4d8]/40 uppercase">Maximum Daily Upload Bounds</label>
-                                <input type="text" defaultValue="50MB / user" className="h-10 bg-white/[0.04] border border-white/10 rounded-xl px-4 text-white focus:border-[#c3c0ff] outline-none" />
+                                <label className="text-[10px] font-black uppercase tracking-widest text-[#1C1611]/70">Auth Provider</label>
+                                <div className="h-12 bg-[#F6F0DD] border-[3px] border-[#1C1611] rounded-xl px-4 flex items-center text-[#1C1611]/80 font-bold text-sm shadow-[2px_2px_0px_0px_#1C1611]">
+                                    Better-Auth + Google OAuth
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-[#1C1611]/70">Payment Gateway</label>
+                                <div className="h-12 bg-[#F6F0DD] border-[3px] border-[#1C1611] rounded-xl px-4 flex items-center text-[#1C1611]/80 font-bold text-sm shadow-[2px_2px_0px_0px_#1C1611]">
+                                    Stripe (Test Mode)
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-[#1C1611]/70">Database</label>
+                                <div className="h-12 bg-[#F6F0DD] border-[3px] border-[#1C1611] rounded-xl px-4 flex items-center text-[#1C1611]/80 font-bold text-sm shadow-[2px_2px_0px_0px_#1C1611]">
+                                    MongoDB Atlas
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Box 2: System Maintenance / Operation Triggers */}
-                    <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 flex flex-col gap-5">
-                        <h3 className="text-sm font-serif font-bold text-white flex items-center gap-2 tracking-tight">
-                            <Database className="w-4 h-4 text-[#c3c0ff]" /> Cache & Operational Pipeline Routing
+                    {/* Cache Controls */}
+                    <div className="bg-white border-[3px] border-[#1C1611] shadow-[4px_4px_0px_0px_#1C1611] rounded-2xl p-6 flex flex-col gap-5">
+                        <h3 className="text-lg font-black uppercase text-[#1C1611] flex items-center gap-2">
+                            <RefreshCw className="w-5 h-5 stroke-[2.5px]" /> Cache & Pipeline Controls
                         </h3>
-                        <p className="text-[#c7c4d8]/40 font-light leading-normal -mt-2">
-                            Flushing active memory caches or execution tables immediately terminates active visitor sessions.
+                        <p className="text-[#1C1611]/80 font-bold uppercase text-xs">
+                            Operational actions for cache management and system verification.
                         </p>
 
-                        <div className="flex flex-wrap items-center gap-3 pt-2">
-                            <button className="h-10 px-5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold rounded-xl flex items-center gap-2 transition-colors cursor-pointer">
-                                <RefreshCw className="w-3.5 h-3.5" /> Purge Asset Cache
+                        <div className="flex flex-wrap items-center gap-4 pt-2">
+                            <button className="h-12 px-6 bg-[#FF4A3A] text-white border-[3px] border-[#1C1611] font-black uppercase text-sm rounded-xl shadow-[3px_3px_0px_0px_#1C1611] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_#1C1611] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 flex items-center gap-2">
+                                <RefreshCw className="w-4 h-4 stroke-[2.5px]" /> Purge Asset Cache
                             </button>
-                            <button className="h-10 px-5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold rounded-xl flex items-center gap-2 transition-colors cursor-pointer">
-                                <ShieldCheck className="w-3.5 h-3.5" /> Force Route Verification
+                            <button className="h-12 px-6 bg-[#4DD0B1] text-[#1C1611] border-[3px] border-[#1C1611] font-black uppercase text-sm rounded-xl shadow-[3px_3px_0px_0px_#1C1611] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_#1C1611] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[0px_0px_0px_0px_#1C1611] transition-all duration-100 flex items-center gap-2">
+                                <ShieldCheck className="w-4 h-4 stroke-[2.5px]" /> Force Route Verification
                             </button>
                         </div>
-                    </div>
-
-                    {/* Footer Save Row Trigger */}
-                    <div className="w-full border-t border-white/5 pt-4 flex justify-end">
-                        <button className="h-11 px-6 bg-[#c3c0ff] hover:bg-[#b0adfa] text-[#1d00a5] font-bold text-sm rounded-xl shadow-lg transition-all duration-200 active:scale-[0.98] flex items-center gap-2 cursor-pointer">
-                            <Save className="w-4 h-4 stroke-[2.5]" /> Commit Configurations
-                        </button>
                     </div>
 
                 </div>

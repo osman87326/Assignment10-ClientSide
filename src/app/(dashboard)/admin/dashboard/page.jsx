@@ -14,23 +14,27 @@ export const metadata = {
 
 async function getAdminData(headersList) {
     try {
-        const tokenRes = await fetch('http://localhost:3000/api/auth/token', { headers: headersList, cache: 'no-store' });
+        const cookie = headersList.get('cookie') || '';
+        const tokenRes = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/token`, { headers: cookie ? { cookie } : {}, cache: 'no-store' });
         const token = tokenRes.ok ? (await tokenRes.json())?.token : "";
-        if (!token) return { stats: null, reports: [] };
+        if (!token) return { stats: null, reports: [], analytics: [] };
 
         const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
         
-        const [statsRes, reportsRes] = await Promise.all([
-            fetch(`/api/backend/admin/stats`, { headers: { "Authorization": `Bearer ${token}` }, cache: 'no-store' }),
-            fetch(`/api/backend/admin/reports`, { headers: { "Authorization": `Bearer ${token}` }, cache: 'no-store' })
+        const [statsRes, reportsRes, analyticsRes] = await Promise.all([
+            fetch(`${serverUrl}/api/admin/stats`, { headers: { "Authorization": `Bearer ${token}` }, cache: 'no-store' }),
+            fetch(`${serverUrl}/api/admin/reports`, { headers: { "Authorization": `Bearer ${token}` }, cache: 'no-store' }),
+            fetch(`${serverUrl}/api/admin/analytics`, { headers: { "Authorization": `Bearer ${token}` }, cache: 'no-store' })
         ]);
 
         const statsData = statsRes.ok ? await statsRes.json() : null;
         const reportsData = reportsRes.ok ? await reportsRes.json() : null;
+        const analyticsData = analyticsRes.ok ? await analyticsRes.json() : null;
 
         return {
             stats: statsData?.success ? statsData.stats : null,
-            reports: reportsData?.success ? reportsData.data : []
+            reports: reportsData?.success ? reportsData.data : [],
+            analytics: analyticsData?.success ? analyticsData.data : []
         };
     } catch (err) {
         console.error("Error fetching admin data:", err);
@@ -46,7 +50,7 @@ export default async function AdminDashboardPage() {
         redirect("/home");
     }
 
-    const { stats, reports } = await getAdminData(headersList);
+    const { stats, reports, analytics } = await getAdminData(headersList);
     return (
         <div className="w-full min-h-screen bg-[#F6F0DD] text-[#1C1611] p-4 sm:p-6 md:p-10 select-none flex flex-col gap-8 font-sans">
             <div className="max-w-7xl mx-auto w-full flex flex-col gap-8">
@@ -93,7 +97,7 @@ export default async function AdminDashboardPage() {
                 <OverviewMetrics stats={stats} />
 
                 {/* Main Analytics Visualization Section */}
-                <PlatformHealthChart />
+                <PlatformHealthChart analytics={analytics} />
 
                 {/* Bottom Split Layout Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start w-full min-w-0">

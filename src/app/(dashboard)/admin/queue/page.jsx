@@ -10,13 +10,14 @@ export const metadata = {
 
 async function getAdminReports(headersList) {
     try {
-        const tokenRes = await fetch('http://localhost:3000/api/auth/token', { headers: headersList, cache: 'no-store' });
+        const cookie = headersList.get('cookie') || '';
+        const tokenRes = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/token`, { headers: cookie ? { cookie } : {}, cache: 'no-store' });
         const token = tokenRes.ok ? (await tokenRes.json())?.token : "";
         if (!token) return [];
 
         const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
         
-        const res = await fetch(`${serverUrl}/api/admin/reports`, { 
+        const res = await fetch(`${process.env.SERVER_URL || 'http://localhost:3100'}/api/admin/reports`, { 
             headers: { "Authorization": `Bearer ${token}` }, 
             cache: 'no-store' 
         });

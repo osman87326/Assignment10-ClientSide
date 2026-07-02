@@ -11,9 +11,10 @@ export const metadata = {
 
 async function getSavedLessons(userId, headersList) {
   try {
-    const tokenRes = await fetch("http://localhost:3000/api/auth/token", {
-      headers: headersList,
-      cache: "no-store",
+    const cookie = headersList.get('cookie') || '';
+    const tokenRes = await fetch(`${process.env.BETTER_AUTH_URL}/api/auth/token`, {
+      headers: cookie ? { cookie } : {},
+      cache: 'no-store'
     });
     let token = "";
     if (tokenRes.ok) {
@@ -22,20 +23,27 @@ async function getSavedLessons(userId, headersList) {
     }
     if (!token) return [];
 
-    const serverUrl = process.env.SERVER_URL || "http://localhost:3100";
-    const res = await fetch(`${serverUrl}/api/users/${userId}/favorites`, {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
+    const serverUrl = process.env.SERVER_URL || 'http://localhost:3100';
+    const res = await fetch(`${process.env.SERVER_URL || 'http://localhost:3100'}/api/users/${userId}/favorites`, {
+      headers: { "Authorization": `Bearer ${token}` },
+      cache: 'no-store'
     });
     if (!res.ok) return [];
     const data = await res.json();
     if (!data.success) return [];
-
-    return (data.data || []).map((fav) => ({
-      ...fav.lessonDetails,
-      savedAt: fav.savedAt,
-      favoriteId: fav._id,
-    }));
+    // The aggregation returns objects with a nested lessonDetails field
+    return (data.data || []).map(fav => {
+      const details = fav.lessonDetails || {};
+      const creator = details.creator || {};
+      
+      return {
+        ...details,
+        authorName: creator.name || "Unknown",
+        authorImage: creator.image || creator.photoURL || null,
+        savedAt: fav.savedAt,
+        favoriteId: fav._id,
+      };
+    });
   } catch (err) {
     console.error("Error fetching saved lessons:", err);
     return [];
@@ -57,6 +65,8 @@ export default async function SavedLessonsPage() {
   return (
     <div className="w-full min-h-screen bg-[#F6F0DD] text-[#1C1611] p-4 sm:p-6 md:p-10 select-none">
       <div className="max-w-6xl mx-auto w-full flex flex-col gap-8">
+
+        {/* Page Header */}
         <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-[3.5px] border-[#1C1611] pb-6">
           <div>
             <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-[#1C1611] mb-1.5 flex items-center gap-3">
@@ -74,6 +84,7 @@ export default async function SavedLessonsPage() {
           </div>
         </header>
 
+        {/* Main Content — Card Grid */}
         <main className="w-full min-w-0">
           {savedLessons.length === 0 ? (
             <div className="w-full bg-[#F6F0DD] border-[3.5px] border-[#1C1611] rounded-2xl shadow-[6px_6px_0px_0px_#1C1611] p-12 text-center">
@@ -94,6 +105,7 @@ export default async function SavedLessonsPage() {
             </div>
           )}
         </main>
+
       </div>
     </div>
   );

@@ -3,6 +3,12 @@
 import { useEffect, useState } from "react";
 import usePrefersReducedMotion from "@/hooks/usePrefersReducedMotion";
 
+/**
+ * Lightweight floating decorative elements using pure CSS animations
+ * instead of 14 simultaneous Framer Motion JS-driven infinite loops.
+ * Reduced from 14 particles to 6 for performance.
+ */
+
 const PARTICLES = [
   { type: "circle", size: 6, x: "15%", y: "20%", delay: "0s", duration: "7s", opacity: 0.25 },
   { type: "circle", size: 4, x: "80%", y: "30%", delay: "1.5s", duration: "9s", opacity: 0.15 },
@@ -19,7 +25,7 @@ function StarShape({ size }) {
       height={size * 4}
       viewBox="0 0 16 16"
       fill="currentColor"
-      style={{ color: "var(--text)" }}
+      className="text-primary"
     >
       <path d="M8 0l1.5 5.5L16 8l-6.5 2.5L8 16l-1.5-5.5L0 8l6.5-2.5z" />
     </svg>
@@ -31,7 +37,9 @@ export default function FloatingElements() {
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 0);
+    const timer = setTimeout(() => {
+      setMounted(true);
+    }, 0);
     return () => clearTimeout(timer);
   }, []);
 
@@ -53,12 +61,11 @@ export default function FloatingElements() {
         >
           {p.type === "circle" && (
             <div
-              className="rounded-full"
+              className="rounded-full bg-primary"
               style={{
                 width: p.size,
                 height: p.size,
-                backgroundColor: "var(--border)",
-                boxShadow: `0 0 ${p.size * 2}px ${p.size / 2}px color-mix(in srgb, var(--border) 20%, transparent)`,
+                boxShadow: `0 0 ${p.size * 2}px ${p.size / 2}px rgba(195, 192, 255, 0.1)`,
                 opacity: p.opacity,
               }}
             />
@@ -74,7 +81,7 @@ export default function FloatingElements() {
               style={{
                 width: p.size,
                 height: p.size,
-                background: `radial-gradient(circle, color-mix(in srgb, var(--border) 30%, transparent), transparent 70%)`,
+                background: "radial-gradient(circle, rgba(195, 192, 255, 0.2), transparent 70%)",
                 opacity: p.opacity,
               }}
             />

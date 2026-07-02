@@ -19,8 +19,7 @@ export default function AdminAppealsPage() {
                 setToken(jwt);
 
                 if (jwt) {
-                    const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3100';
-                    const res = await fetch(`${serverUrl}/api/admin/appeals`, {
+                                        const res = await fetch(`/api/backend/admin/appeals`, {
                         headers: { "Authorization": `Bearer ${jwt}` }
                     });
                     if (res.ok) {
@@ -46,8 +45,7 @@ export default function AdminAppealsPage() {
         const { appealId, status } = confirmAction;
 
         try {
-            const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3100';
-            const res = await fetch(`${serverUrl}/api/admin/appeals/${appealId}`, {
+                        const res = await fetch(`/api/backend/admin/appeals/${appealId}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",

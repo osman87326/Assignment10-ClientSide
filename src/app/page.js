@@ -7,6 +7,11 @@ import CallToAction from "@/components/CallToAction";
 import StatsSection from "@/components/StatsSection";
 import SectionDivider from "@/components/SectionDivider";
 
+
+export const metadata = {
+  title: "Home",
+};
+
 export default function Home() {
   return (
     <main className="pt-16">

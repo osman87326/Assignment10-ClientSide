@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Settings, User, Camera } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
@@ -13,12 +13,13 @@ export default function SettingsPage() {
   const [photoURL, setPhotoURL] = useState(session?.user?.image || "");
   const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
+  // Sync state when session loads
+  useState(() => {
     if (session?.user) {
       setName(session.user.name || "");
       setPhotoURL(session.user.image || "");
     }
-  }, [session?.user]);
+  });
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -39,12 +40,12 @@ export default function SettingsPage() {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
           name: name.trim(),
-          ...(photoURL.trim() ? { photoURL: photoURL.trim() } : {}),
-        }),
+          ...(photoURL.trim() ? { photoURL: photoURL.trim() } : {})
+        })
       });
 
       const data = await res.json();
@@ -72,6 +73,8 @@ export default function SettingsPage() {
   return (
     <div className="w-full min-h-screen bg-[#F6F0DD] text-[#1C1611] p-4 sm:p-6 md:p-10 select-none">
       <div className="max-w-2xl mx-auto w-full flex flex-col gap-8">
+
+        {/* Page Header */}
         <header className="border-b-[3.5px] border-[#1C1611] pb-6">
           <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-[#1C1611] mb-1.5 flex items-center gap-3">
             <Settings className="w-8 h-8 stroke-[2.5px]" />
@@ -82,7 +85,10 @@ export default function SettingsPage() {
           </p>
         </header>
 
+        {/* Profile Section */}
         <form onSubmit={handleSave} className="flex flex-col gap-8">
+          
+          {/* Avatar Preview */}
           <div className="flex items-center gap-6">
             <div className="relative w-20 h-20 rounded-2xl border-[3px] border-[#1C1611] overflow-hidden shadow-[3px_3px_0px_0px_#1C1611] bg-[#4DD0B1] flex items-center justify-center shrink-0">
               {photoURL ? (
@@ -104,12 +110,12 @@ export default function SettingsPage() {
                 {session.user.email}
               </p>
               <p className="text-[10px] font-black text-[#1C1611]/40 uppercase mt-1">
-                {session.user.isPremium ? "Premium Member" : "Free Member"} •{" "}
-                {session.user.role || "user"}
+                {session.user.isPremium ? "Premium Member" : "Free Member"} • {session.user.role || "user"}
               </p>
             </div>
           </div>
 
+          {/* Name Field */}
           <div className="flex flex-col gap-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-[#1C1611]/70">
               Display Name
@@ -123,6 +129,7 @@ export default function SettingsPage() {
             />
           </div>
 
+          {/* Photo URL Field */}
           <div className="flex flex-col gap-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-[#1C1611]/70 flex items-center gap-1.5">
               <Camera className="w-3.5 h-3.5 stroke-[2.5px]" />
@@ -137,6 +144,7 @@ export default function SettingsPage() {
             />
           </div>
 
+          {/* Save Button */}
           <div className="border-t-[3.5px] border-[#1C1611] pt-6 flex justify-end">
             <button
               type="submit"
@@ -146,7 +154,9 @@ export default function SettingsPage() {
               {isSaving ? "Saving..." : "Save Changes"}
             </button>
           </div>
+
         </form>
+
       </div>
     </div>
   );

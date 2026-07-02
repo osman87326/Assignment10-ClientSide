@@ -15,8 +15,14 @@ export default function SidebarMenuRouter({ userMenu, adminMenu, isMobileMenuOpe
   const activeMenuGroups = isAdmin ? adminMenu : userMenu;
 
   useEffect(() => {
-    setIsNavigating(false);
-  }, [pathname]);
+    if (!isNavigating) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setIsNavigating(false);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isNavigating, pathname]);
 
   const handleLinkClick = (href) => {
     if (pathname !== href) {
@@ -44,8 +50,9 @@ export default function SidebarMenuRouter({ userMenu, adminMenu, isMobileMenuOpe
 
       {/* Sidebar Container */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-72 h-screen bg-[#F6F0DD] border-r-[3.5px] border-[#1C1611] flex flex-col justify-between py-8 px-4 select-none shrink-0 transition-transform duration-300 ease-in-out
-        md:sticky md:top-0 md:w-64 md:translate-x-0
+        fixed left-0 z-50 w-72 bg-[#F6F0DD] border-r-[3.5px] border-[#1C1611] flex flex-col justify-between py-8 px-4 select-none shrink-0 transition-transform duration-300 ease-in-out
+        top-[105px] h-[calc(100vh-105px)] sm:top-[117px] sm:h-[calc(100vh-117px)]
+        md:sticky md:w-64 md:translate-x-0
         ${isMobileMenuOpen ? "translate-x-0 shadow-[8px_0_0_0_#1C1611]" : "-translate-x-full"}
       `}>
       

@@ -36,11 +36,13 @@ export default function LoadingScreen({
 }) {
   const [visible, setVisible] = useState(true);
   const [messageIndex, setMessageIndex] = useState(0);
-  const mountTimeRef = useRef(0);
+  const mountTimeRef = useRef(null);
   const hasMetMinDuration = useRef(false);
 
   useEffect(() => {
-    mountTimeRef.current = Date.now();
+    if (mountTimeRef.current === null) {
+      mountTimeRef.current = Date.now();
+    }
   }, []);
 
   // Rotate loading messages

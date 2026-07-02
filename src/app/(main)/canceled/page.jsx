@@ -21,7 +21,7 @@ export default function CanceledPage() {
         </h1>
         <p className="text-[#1C1611]/85 font-medium mb-8">
           Your payment process was safely aborted. You have not been charged.
-          Whenever you're ready, you can always upgrade your account from the pricing page.
+          Whenever you are ready, you can always upgrade your account from the pricing page.
         </p>
 
         {/* Call to action */}

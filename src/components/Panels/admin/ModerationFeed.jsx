@@ -135,7 +135,7 @@ export default function ModerationFeed({ reports }) {
                             </div>
                             <div>
                                 <span className="block text-[10px] text-[#1C1611]/60 font-black uppercase tracking-widest mb-1">Date</span>
-                                <p>{new Date(selectedReport.timestamp || Date.now()).toLocaleString()}</p>
+                              <p>{new Date(selectedReport.timestamp || Date.now()).toLocaleString()}</p>
                             </div>
                             
                             <div className="flex flex-col gap-3 mt-4 pt-4 border-t-[2.5px] border-[#1C1611]/10">
